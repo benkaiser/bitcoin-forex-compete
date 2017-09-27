@@ -1,4 +1,4 @@
-Bitcoin Exchange Calculator
+Bitcoin vs. Foreign Exchange
 =================
 
 This is a simple calculator to works out how:
