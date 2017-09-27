@@ -1,0 +1,13 @@
+web:
+  build: .
+  command: npm run nodemon
+  dockerfile: Dockerfile.local
+  environment:
+    PORT: 8243
+    ENV: development
+    APP_URL: 'http://localhost:8243'
+  ports:
+    - "8243:8243"
+  volumes:
+    - .:/app
+    - /app/node_modules

@@ -1,0 +1,45 @@
+{
+  "name": "bitcoinexchange",
+  "version": "2.0.0",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "nodemon": "./node_modules/nodemon/bin/nodemon.js index.js",
+    "postinstall": "npm rebuild node-sass",
+    "sass": "./node_modules/node-sass/bin/node-sass -r src/scss -o static/css",
+    "start": "npm run webpack && npm run sass && node --harmony index.js",
+    "webpack": "./node_modules/webpack/bin/webpack.js"
+  },
+  "dependencies": {
+    "async": "^2.4.1",
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-react-jsx": "^6.8.0",
+    "babel-preset-es2015": "^6.18.0",
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^4.0.0",
+    "es6-promise": "^4.1.1",
+    "express": "^4.14.0",
+    "node-fetch": "^1.7.3",
+    "node-sass": "^4.1.1",
+    "nodemon": "^1.11.0",
+    "preact": "^8.1.0",
+    "preact-compat": "^3.16.0",
+    "pug": "^2.0.0-beta6",
+    "webpack": "^1.14.0"
+  },
+  "optionalDependencies": {},
+  "devDependencies": {},
+  "jshintConfig": {
+    "esversion": 6
+  },
+  "engines": {
+    "node": "6"
+  },
+  "jscsConfig": {
+    "requireTrailingComma": false
+  }
+}
