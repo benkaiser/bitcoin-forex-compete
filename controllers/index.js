@@ -11,7 +11,7 @@ router.get('/data', (req, res) => {
   ]).then((results) => Promise.all(results.map((result) => result.json()))
   ).then((jsonResults) => {
     res.send({
-      exchangeRate: 1 / jsonResults[0].rates.AUD,
+      exchangeRate: jsonResults[0].rates.AUD,
       bidUSD: parseFloat(jsonResults[1].bid),
       askUSD: parseFloat(jsonResults[1].ask),
       bidAUD: jsonResults[2].CurrentHighestBidPrice,

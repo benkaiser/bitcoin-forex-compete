@@ -28,18 +28,18 @@ export default class ApplicationView extends Component {
       <div className="row">
         <div className="col-md-6">
           <p>Using Limits</p>
-          { this.calculationForItems(this.state.data.askUSD, this.state.data.bidAUD, this.state.data.exchangeRate) }
+          { this.calculationForItems(this.state.data.bidUSD, this.state.data.askAUD, this.state.data.exchangeRate) }
         </div>
         <div className="col-md-6">
           <p>Using Market Buy</p>
-          { this.calculationForItems(this.state.data.bidUSD, this.state.data.askAUD, this.state.data.exchangeRate) }
+          { this.calculationForItems(this.state.data.askUSD, this.state.data.bidAUD, this.state.data.exchangeRate) }
         </div>
       </div>
     );
   }
 
   calculationForItems(buy, sell, baselineExchange) {
-    var bitcoinExchange = 1 / (1 / buy * sell);
+    var bitcoinExchange = sell / buy;
     var currencyDifference = bitcoinExchange / baselineExchange;
     var percentage = (currencyDifference - 1) * 100;
     var sign = percentage > 0 ? '+' : '-';
