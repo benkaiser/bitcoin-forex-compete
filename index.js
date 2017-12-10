@@ -2,6 +2,11 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
+const DB = require('./db');
+const cron = require('./services/cron');
+
+DB.initialize(process.env.MONGO_URL);
+cron.start();
 
 var app = express();
 

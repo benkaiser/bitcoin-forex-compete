@@ -1,11 +1,16 @@
+mongo:
+  image: mongo
 web:
   build: .
   command: npm run nodemon
   dockerfile: Dockerfile.local
+  links:
+    - mongo
   environment:
     PORT: 8243
     ENV: development
     APP_URL: 'http://localhost:8243'
+    MONGO_URL: 'mongodb://mongo:27017/stretto'
   ports:
     - "8243:8243"
   volumes:

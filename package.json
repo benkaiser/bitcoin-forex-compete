@@ -19,16 +19,21 @@
     "babel-plugin-transform-react-jsx": "^6.8.0",
     "babel-preset-es2015": "^6.18.0",
     "body-parser": "^1.15.2",
+    "chart.js": "^2.7.1",
     "cookie-parser": "^1.4.3",
     "dotenv": "^4.0.0",
     "es6-promise": "^4.1.1",
     "express": "^4.14.0",
+    "later": "^1.2.0",
+    "moment": "^2.19.3",
+    "monk": "^6.0.5",
     "node-fetch": "^1.7.3",
     "node-sass": "^4.1.1",
     "nodemon": "^1.11.0",
     "preact": "^8.1.0",
     "preact-compat": "^3.16.0",
     "pug": "^2.0.0-beta6",
+    "react-chartjs-2": "^2.6.4",
     "webpack": "^1.14.0"
   },
   "optionalDependencies": {},
@@ -37,7 +42,7 @@
     "esversion": 6
   },
   "engines": {
-    "node": "6"
+    "node": "8"
   },
   "jscsConfig": {
     "requireTrailingComma": false
