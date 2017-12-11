@@ -22,7 +22,14 @@ class DB {
     const aDayAgo = Date.now() - 86400000;
     const tenMinutes = 600000;
     return this._prices.aggregate([
-      { $match: { time: { $gte: aDayAgo } } },
+      { $match: {
+        time: { $gte: aDayAgo },
+        bidUSD: { $ne: NaN },
+        askUSD: { $ne: NaN },
+        bidAUD: { $ne: NaN },
+        askAUD: { $ne: NaN },
+        exchangeRate: { $ne: NaN }
+      }},
       { $group: {
         _id: { $floor: { $divide: ['$time', tenMinutes] } },
         bidUSD: { $avg: '$bidUSD' },

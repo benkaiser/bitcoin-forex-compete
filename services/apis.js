@@ -8,13 +8,21 @@ module.exports = class APIs {
       fetch('https://api.gdax.com/products/BTC-USD/ticker'),
       fetch('https://api.independentreserve.com/Public/GetMarketSummary?primaryCurrencyCode=xbt&secondaryCurrencyCode=aud')
     ]).then((results) => Promise.all(results.map((result) => result.json()))
-    ).then((jsonResults) => {
+  ).then(([fixer, gdax, independentReserve]) => {
+      if (!fixer.rates.AUD ||
+        !gdax.bid ||
+        !gdax.ask ||
+        !independentReserve.CurrentHighestBidPrice ||
+        !independentReserve.CurrentLowestOfferPrice) {
+        console.log([fixer, gdax, independentReserve]);
+        return Promise.reject(new Error('One of the API calls failed'));
+      }
       return {
-        exchangeRate: jsonResults[0].rates.AUD,
-        bidUSD: parseFloat(jsonResults[1].bid),
-        askUSD: parseFloat(jsonResults[1].ask),
-        bidAUD: jsonResults[2].CurrentHighestBidPrice,
-        askAUD: jsonResults[2].CurrentLowestOfferPrice
+        exchangeRate: fixer.rates.AUD,
+        bidUSD: parseFloat(gdax.bid),
+        askUSD: parseFloat(gdax.ask),
+        bidAUD: independentReserve.CurrentHighestBidPrice,
+        askAUD: independentReserve.CurrentLowestOfferPrice
       };
     }).catch((error) => {
       console.log('Unable to fetch data');
