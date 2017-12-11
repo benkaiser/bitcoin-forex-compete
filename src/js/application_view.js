@@ -100,7 +100,9 @@ export default class ApplicationView extends Component {
     };
     return (
       <div className="row">
-        <LineChart data={data} options={options} height={200}/>
+        <div className="col-md-12">
+          <LineChart data={data} options={options} height={200}/>
+        </div>
       </div>
     );
   }
