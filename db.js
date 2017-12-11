@@ -20,17 +20,17 @@ class DB {
 
   getLastDay() {
     const aDayAgo = Date.now() - 86400000;
-    const fiveMinutes = 300000;
+    const tenMinutes = 600000;
     return this._prices.aggregate([
       { $match: { time: { $gte: aDayAgo } } },
       { $group: {
-        _id: { $floor: { $divide: ['$time', fiveMinutes] } },
-        bidUSD: { $first: '$bidUSD' },
-        askUSD: { $first: '$askUSD' },
-        bidAUD: { $first: '$bidAUD' },
-        askAUD: { $first: '$askAUD' },
-        exchangeRate: { $first: '$exchangeRate' },
-        time: { $first: '$time' },
+        _id: { $floor: { $divide: ['$time', tenMinutes] } },
+        bidUSD: { $avg: '$bidUSD' },
+        askUSD: { $avg: '$askUSD' },
+        bidAUD: { $avg: '$bidAUD' },
+        askAUD: { $avg: '$askAUD' },
+        exchangeRate: { $avg: '$exchangeRate' },
+        time: { $avg: '$time' },
         }
       },
       { $sort: { time: 1 } }

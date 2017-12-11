@@ -76,13 +76,26 @@ export default class ApplicationView extends Component {
           {
             type: 'time',
             time: {
-              unit: 'minute',
+              tooltipFormat: 'h:mm a',
               displayFormats: {
-                'minute': 'HH:mm'
+                'minute': 'h:mm a',
+                'hour': 'h a'
               }
             }
           }
         ]
+      },
+      tooltips: {
+        mode: 'index',
+        intersect: false
+      },
+      elements: {
+        line: {
+          tension: 0.2
+        },
+        point: {
+          radius: 2
+        }
       }
     };
     return (
