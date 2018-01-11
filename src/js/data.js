@@ -7,8 +7,8 @@ export default class Data {
     });
   }
 
-  static getHistoric() {
-    return fetch('/history')
+  static getHistoric(timeframe, interval) {
+    return fetch(`/history?timeframe=${timeframe}&interval=${interval}`)
     .then((response) => response.json())
     .then((json) => {
       return json;

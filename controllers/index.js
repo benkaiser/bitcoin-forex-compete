@@ -14,7 +14,7 @@ router.get('/latest', (req, res) => {
 });
 
 router.get('/history', (req, res) => {
-  DB.getLastDay()
+  DB.getHistory(req.query.timeframe || 86400, req.query.interval ? parseInt(req.query.interval) : 3600)
   .then((data) => {
     res.send(data);
   })
@@ -25,6 +25,7 @@ router.get('/history', (req, res) => {
 });
 
 router.get('*', (req, res) => {
+  res.set('Cache-Control', 'no-cache');
   res.render('index');
 });
 

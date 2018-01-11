@@ -1,5 +1,6 @@
 import { h, render, Component } from 'preact';
 import { Line as LineChart } from 'react-chartjs-2';
+import { Chart } from 'react-google-charts';
 import moment from 'moment';
 
 import Data from './data';
@@ -30,7 +31,8 @@ export default class ApplicationView extends Component {
     return (
       <div>
         { this.showCalculations() }
-        { this.showChart() }
+        { this.showSpreadChart() }
+        { this.showCandleStickChart() }
       </div>
     );
   }
@@ -50,7 +52,7 @@ export default class ApplicationView extends Component {
     );
   }
 
-  showChart() {
+  showSpreadChart() {
     const data = {
       labels: this._historicTimestamps(),
       datasets: [
@@ -107,6 +109,36 @@ export default class ApplicationView extends Component {
     );
   }
 
+  showCandleStickChart() {
+    const data = [
+      ['Time', 'min', 'opening', 'closing', 'maximum'],
+    ];
+    this.state.candlestickChartData.map(item => data.push([new Date(item.time), item.diffMin, item.diffOpen, item.diffClose, item.diffMax]));
+    console.log(data);
+    return (
+      <div className="row">
+        <div className="col-md-12">
+          <Chart
+            chartType="CandlestickChart"
+            data={data}
+            options={{
+              legend: 'none',
+              bar: { groupWidth: '100%' },
+              colors: ['#666'],
+              candlestick: {
+                fallingColor: { strokeWidth: 0, fill: '#a52714' },
+                risingColor: { strokeWidth: 0, fill: '#0f9d58' }
+              }
+            }}
+            graph_id="CandleStickChart"
+            width="100%"
+            height="400px"
+          />
+        </div>
+      </div>
+    );
+  }
+
   calculateDifference(buy, sell, baselineExchange) {
     const bitcoinExchange = sell / buy;
     const currencyDifference = bitcoinExchange / baselineExchange;
@@ -140,29 +172,31 @@ export default class ApplicationView extends Component {
   getPrice() {
     Promise.all([
       Data.getPrices(),
-      Data.getHistoric()
+      Data.getHistoric(86400, 600),
+      Data.getHistoric(86400 * 3, 3600)
     ]).then((results) => {
       this.setState({
         data: results[0],
-        historicData: results[1],
+        lineChartData: results[1],
+        candlestickChartData: results[2],
         ready: true
       })
     });
   }
 
   _historicTimestamps() {
-    return this.state.historicData.map(item => moment(item.time));
+    return this.state.lineChartData.map(item => moment(item.time));
   }
 
   _limitDifferenceOverTime() {
-    return this.state.historicData.map(item => {
-      return this.calculateDifference(item.bidUSD, item.askAUD, item.exchangeRate).percentageDifference.toFixed(2);
+    return this.state.lineChartData.map(item => {
+      return item.diffLimitMin + (item.diffLimitMax - item.diffLimitMin) / 2;
     });
   }
 
   _marketDifferenceOverTime() {
-    return this.state.historicData.map(item => {
-      return this.calculateDifference(item.askUSD, item.bidAUD, item.exchangeRate).percentageDifference.toFixed(2);
+    return this.state.lineChartData.map(item => {
+      return item.diffMin + (item.diffMax - item.diffMin) / 2;
     });
   }
 }
