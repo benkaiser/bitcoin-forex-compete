@@ -9,7 +9,9 @@ export default class ApplicationView extends Component {
   constructor() {
     super();
     this.state = {
-      ready: false
+      ready: false,
+      candlestickIsMarket: true,
+      timeframe: 'day'
     };
     this.getPrice();
     setInterval(this.getPrice.bind(this), 30000);
@@ -113,15 +115,28 @@ export default class ApplicationView extends Component {
     const data = [
       ['Time', 'min', 'opening', 'closing', 'maximum'],
     ];
-    this.state.candlestickChartData.map(item => data.push([new Date(item.time), item.diffMin, item.diffOpen, item.diffClose, item.diffMax]));
-    console.log(data);
+    this.state.candlestickChartData.map(item => data.push([
+      new Date(item.time),
+      this.state.candlestickIsMarket ? item.diffMin : item.diffLimitMin,
+      this.state.candlestickIsMarket ? item.diffOpen : item.diffLimitOpen,
+      this.state.candlestickIsMarket ? item.diffClose : item.diffLimitClose,
+      this.state.candlestickIsMarket ? item.diffMax : item.diffLimitMax
+    ]));
     return (
       <div className="row">
         <div className="col-md-12">
+          <h4>CandleStick - {this.state.candlestickIsMarket ? 'Market' : 'Limit'} Data</h4>
+          <div className="btn btn-default" onClick={this._changeChartType.bind(this)}>Switch Chart Type</div>
+          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, 'day')}>1 day</div>
+          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, '3day')}>3 days</div>
+          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, 'week')}>7 days</div>
+          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, 'month')}>30 days</div>
           <Chart
             chartType="CandlestickChart"
             data={data}
+            loader={<div></div>}
             options={{
+              chartArea: { left: '5%', top: '5%', width: '90%', height: '90%'},
               legend: 'none',
               bar: { groupWidth: '100%' },
               colors: ['#666'],
@@ -137,6 +152,19 @@ export default class ApplicationView extends Component {
         </div>
       </div>
     );
+  }
+
+  _changeChartType() {
+    this.setState({
+      candlestickIsMarket: !this.state.candlestickIsMarket
+    });
+  }
+
+  _changeTimeframe(timeframe) {
+    this.setState({
+      timeframe: timeframe
+    });
+    this.getPrice(timeframe);
   }
 
   calculateDifference(buy, sell, baselineExchange) {
@@ -169,11 +197,21 @@ export default class ApplicationView extends Component {
     return (<p>Loading...</p>);
   }
 
-  getPrice() {
+  getPrice(timeframe) {
+    const daySeconds = 86400;
+    const tenMinutesSeconds = 600;
+    const hourSeconds = 3600;
+    let timeframes = {
+      'day': { period: daySeconds, smallInterval: tenMinutesSeconds, largeInterval: hourSeconds },
+      '3day': { period: daySeconds * 3, smallInterval: tenMinutesSeconds * 3, largeInterval: hourSeconds * 3 },
+      'week': { period: daySeconds * 7, smallInterval: hourSeconds, largeInterval: hourSeconds * 3 },
+      'month': { period: daySeconds * 30, smallInterval: hourSeconds * 6, largeInterval: daySeconds }
+    };
+    const chosenPeriod = timeframes[timeframe] || timeframes[this.state.timeframe];
     Promise.all([
       Data.getPrices(),
-      Data.getHistoric(86400, 600),
-      Data.getHistoric(86400 * 3, 3600)
+      Data.getHistoric(chosenPeriod.period, chosenPeriod.smallInterval),
+      Data.getHistoric(chosenPeriod.period, chosenPeriod.largeInterval)
     ]).then((results) => {
       this.setState({
         data: results[0],
@@ -190,13 +228,13 @@ export default class ApplicationView extends Component {
 
   _limitDifferenceOverTime() {
     return this.state.lineChartData.map(item => {
-      return item.diffLimitMin + (item.diffLimitMax - item.diffLimitMin) / 2;
+      return (item.diffLimitMin + (item.diffLimitMax - item.diffLimitMin) / 2).toFixed(2);
     });
   }
 
   _marketDifferenceOverTime() {
     return this.state.lineChartData.map(item => {
-      return item.diffMin + (item.diffMax - item.diffMin) / 2;
+      return (item.diffMin + (item.diffMax - item.diffMin) / 2).toFixed(2);
     });
   }
 }
