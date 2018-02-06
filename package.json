@@ -33,6 +33,7 @@
     "preact": "^8.1.0",
     "preact-compat": "^3.16.0",
     "pug": "^2.0.0-beta6",
+    "pushbullet": "^2.1.0",
     "react-chartjs-2": "^2.6.4",
     "react-google-charts": "^1.5.5",
     "webpack": "^1.14.0"
