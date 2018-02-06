@@ -25,6 +25,7 @@
     "es6-promise": "^4.1.1",
     "express": "^4.14.0",
     "later": "^1.2.0",
+    "lite-node-cache": "^0.6.19",
     "moment": "^2.19.3",
     "monk": "^6.0.5",
     "node-fetch": "^1.7.3",
