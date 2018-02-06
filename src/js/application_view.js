@@ -9,12 +9,13 @@ export default class ApplicationView extends Component {
   constructor() {
     super();
     this.state = {
+      fastUpdates: false,
       ready: false,
       candlestickIsMarket: true,
       timeframe: 'day'
     };
     this.getPrice();
-    setInterval(this.getPrice.bind(this), 30000);
+    this._updateRefreshTimer();
   }
 
   render() {
@@ -49,6 +50,13 @@ export default class ApplicationView extends Component {
         <div className="col-md-6">
           <p>Using Market Buy</p>
           { this.calculationForItems(this.state.data.askUSD, this.state.data.bidAUD, this.state.data.exchangeRate) }
+        </div>
+        <div className="col-md-12">
+          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, 'day')}>1 day</div>
+          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, '3day')}>3 days</div>
+          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, 'week')}>7 days</div>
+          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, 'month')}>30 days</div>
+          <div className="btn btn-default" onCLick={this._changeRefreshSpeed.bind(this)}>{this.state.fastUpdates ? 'Fast Updates' : 'Slow Updates'}</div>
         </div>
       </div>
     );
@@ -127,10 +135,6 @@ export default class ApplicationView extends Component {
         <div className="col-md-12">
           <h4>CandleStick - {this.state.candlestickIsMarket ? 'Market' : 'Limit'} Data</h4>
           <div className="btn btn-default" onClick={this._changeChartType.bind(this)}>Switch Chart Type</div>
-          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, 'day')}>1 day</div>
-          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, '3day')}>3 days</div>
-          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, 'week')}>7 days</div>
-          <div className="btn btn-default" onCLick={this._changeTimeframe.bind(this, 'month')}>30 days</div>
           <Chart
             chartType="CandlestickChart"
             data={data}
@@ -165,6 +169,18 @@ export default class ApplicationView extends Component {
       timeframe: timeframe
     });
     this.getPrice(timeframe);
+  }
+
+  _changeRefreshSpeed() {
+    this.setState({
+      fastUpdates: !this.state.fastUpdates
+    });
+    this._updateRefreshTimer();
+  }
+
+  _updateRefreshTimer() {
+    this.updateInterval && clearInterval(this.updateInterval);
+    this.updateInterval = setInterval(this.getPrice.bind(this), this.state.fastUpdates ? 1000 : 30000);
   }
 
   calculateDifference(buy, sell, baselineExchange) {
