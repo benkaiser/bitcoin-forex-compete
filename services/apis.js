@@ -45,7 +45,7 @@ module.exports = class APIs {
     if (cacheItem) {
       return Promise.resolve(cacheItem);
     } else {
-      return fetch('https://api.fixer.io/latest?base=USD&symbols=AUD')
+      return fetch('https://exchangeratesapi.io/api/latest?base=USD&symbols=AUD')
       .then((result) => result.json())
       .then((fixer) => {
         fixerCache.set('fixer', fixer);
